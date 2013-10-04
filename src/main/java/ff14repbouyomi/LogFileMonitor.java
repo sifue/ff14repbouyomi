@@ -96,7 +96,7 @@ public class LogFileMonitor {
         String content = splitted[2];
 
         JsonChat chat = new JsonChat();
-        chat.text = user.isEmpty() ? content : content + "＠" + user;
+        chat.text = bouyomiChan.getOption().speakPlayerName ? content + "＠" + user : content;
         bouyomiChan.post(JsonChat.toJson(chat));
         System.out.println(chat.text);
     }

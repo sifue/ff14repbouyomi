@@ -12,6 +12,7 @@ public class Option implements Config {
     public volatile String logFolderPath = "";
     private final String logFolderPathKey = "LogFolderPath";
 
+
 	public void debugPrint(Object o) {
 		if (debug) {
 			System.out.println(o);
