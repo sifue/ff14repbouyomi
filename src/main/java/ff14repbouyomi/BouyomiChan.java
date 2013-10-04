@@ -32,7 +32,7 @@ public class BouyomiChan extends Thread {
 	private final Option option = new Option();
 	private final ArrayList<Config> configs;
 
-	private static Queue<String> queue = new ConcurrentLinkedQueue<String>();
+	private static final Queue<String> queue = new ConcurrentLinkedQueue<String>();
 
 	private static final BouyomiChan instance = new BouyomiChan();
 

@@ -94,13 +94,19 @@ public class LogFileMonitor {
         String type = splitted[0];
         String user = splitted[1];
         String content = splitted[2];
-        String message = content + "＠" + user;
-        bouyomiChan.post(message);
-        System.out.println(message);
+
+        JsonChat chat = new JsonChat();
+        chat.text = user.isEmpty() ? content : content + "＠" + user;
+        bouyomiChan.post(JsonChat.toJson(chat));
+        System.out.println(chat.text);
     }
 
     private boolean isFileChanged(File file) {
         return fileSizeMap.get(file).longValue() != file.length();
+    }
+
+    public void shutdown() {
+        scheduler.shutdownNow();
     }
 
 }

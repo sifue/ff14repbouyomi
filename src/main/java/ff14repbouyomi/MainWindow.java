@@ -1,11 +1,16 @@
 package ff14repbouyomi;
 
+import sun.net.ftp.FtpReplyCode;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.util.Properties;
+import java.util.concurrent.Executors;
 
 /**
  * メインのJFrameを起動するUIクラス
@@ -16,16 +21,19 @@ public class MainWindow extends JFrame{
 
     private final BouyomiChan bouyomiChan;
 
+    private volatile LogFileMonitor logFileMonitor;
+
     public MainWindow() {
         super();
         this.bouyomiChan = BouyomiChan.get();
+
         textFieldLogFolder.setText(bouyomiChan.getOption().logFolderPath);
     }
 
     public void showMainWindow() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(10, 10, 400, 50);
+        setBounds(10, 10, 400, 75);
         setTitle("FF14Rep棒読みちゃん");
         setLocationRelativeTo(null);
 
@@ -55,9 +63,11 @@ public class MainWindow extends JFrame{
             public void actionPerformed(ActionEvent e) {
                 buttonStart.setEnabled(false);
                 String loadFolderPath = textFieldLogFolder.getText();
-                LogFileMonitor logFileMonitor = new LogFileMonitor(new File(loadFolderPath));
+                logFileMonitor = new LogFileMonitor(new File(loadFolderPath));
                 boolean successStarted = logFileMonitor.start();
                 if(successStarted) {
+                    textFieldLogFolder.setEditable(false);
+                    buttonFolderSelect.setEnabled(false);
                     setTitle("FF14Rep棒読みちゃん:実行中...");
                     Option option = bouyomiChan.getOption();
                     Properties conf = bouyomiChan.readProperties();
@@ -69,6 +79,13 @@ public class MainWindow extends JFrame{
             }
         });
 
+        addWindowStateListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                logFileMonitor.shutdown();
+                System.exit(0);
+            }
+        });
         setVisible(true);
     }
 

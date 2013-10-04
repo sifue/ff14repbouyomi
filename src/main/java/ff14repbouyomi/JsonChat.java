@@ -15,6 +15,10 @@ public class JsonChat {
 		return gson.fromJson(str, JsonChat.class);
 	}
 
+    public static String toJson(JsonChat chat) throws JsonSyntaxException {
+        return gson.toJson(chat, JsonChat.class);
+    }
+
 	@Expose
 	public String text;
 	@Expose
