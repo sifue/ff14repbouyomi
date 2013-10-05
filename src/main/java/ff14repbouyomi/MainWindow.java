@@ -3,6 +3,8 @@ package ff14repbouyomi;
 import sun.net.ftp.FtpReplyCode;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -72,7 +74,6 @@ public class MainWindow extends JFrame{
                 if(successStarted) {
                     textFieldLogFolder.setEditable(false);
                     buttonFolderSelect.setEnabled(false);
-                    checkBoxSpeakPlayerName.setEnabled(false);
                     setTitle("FF14Rep棒読みちゃん:実行中...");
                     Option option = bouyomiChan.getOption();
                     Properties conf = bouyomiChan.readProperties();
@@ -86,6 +87,16 @@ public class MainWindow extends JFrame{
         });
 
         add(checkBoxSpeakPlayerName, BorderLayout.PAGE_END);
+        checkBoxSpeakPlayerName.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                Option option = bouyomiChan.getOption();
+                Properties conf = bouyomiChan.readProperties();
+                option.speakPlayerName = checkBoxSpeakPlayerName.isSelected();
+                option.saveProperties(conf);
+                bouyomiChan.saveToFile(conf);
+            }
+        });
 
         addWindowStateListener(new WindowAdapter() {
             @Override
