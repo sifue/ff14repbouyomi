@@ -92,9 +92,44 @@ public class LogFileMonitor {
 
         }
         String type = splitted[0];
+        LogType logType = LogType.getLogType(type);
+
         String user = splitted[1];
         String content = splitted[2];
 
+        switch (logType) {
+            case Say:
+                if(bouyomiChan.getOption().speakSayLogType) post(user, content);
+                break;
+            case Emote:
+                if(bouyomiChan.getOption().speakEmoteLogType) post(user, content);
+                break;
+            case Yell:
+                if(bouyomiChan.getOption().speakYellLogType) post(user, content);
+                break;
+            case Shout:
+                if(bouyomiChan.getOption().speakShoutLogType) post(user, content);
+                break;
+            case LinkShell:
+                if(bouyomiChan.getOption().speakLinkShellLogType) post(user, content);
+                break;
+            case FreeCompany:
+                if(bouyomiChan.getOption().speakFreeCompanyLogType) post(user, content);
+                break;
+            case Party:
+                if(bouyomiChan.getOption().speakPartyLogType) post(user, content);
+                break;
+            case Tell:
+                if(bouyomiChan.getOption().speakTellLogType) post(user, content);
+                break;
+            case Other:
+                break;
+        }
+
+
+    }
+
+    private void post(String user, String content) {
         JsonChat chat = new JsonChat();
         chat.text = bouyomiChan.getOption().speakPlayerName ? content + "＠" + user : content;
         bouyomiChan.post(JsonChat.toJson(chat));

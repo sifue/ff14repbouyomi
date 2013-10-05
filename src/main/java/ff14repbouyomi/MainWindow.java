@@ -21,7 +21,17 @@ public class MainWindow extends JFrame{
 
     private JTextField textFieldLogFolder = new JTextField();
 
-    private JCheckBox checkBoxSpeakPlayerName = new JCheckBox();
+    private JCheckBox checkBoxSpeakPlayerName = new JCheckBox("プレイヤー名を読み上げる");
+
+    private JCheckBox checkBoxSpeakSayLogType = new JCheckBox("sayを読み上げる");
+    private JCheckBox checkBoxSpeakEmoteLogType = new JCheckBox("emoteを読み上げる");
+    private JCheckBox checkBoxSpeakYellLogType = new JCheckBox("yellを読み上げる");
+    private JCheckBox checkBoxSpeakShoutLogType = new JCheckBox("shoutを読み上げる");
+    private JCheckBox checkBoxSpeakLinkShellLogType = new JCheckBox("linkshellを読み上げる");
+    private JCheckBox checkBoxSpeakFreeCompanyLogType = new JCheckBox("freecompanyを読み上げる");
+    private JCheckBox checkBoxSpeakPartyLogType = new JCheckBox("partyを読み上げる");
+    private JCheckBox checkBoxSpeakTellLogType = new JCheckBox("tellを読み上げる");
+    private JCheckBox checkBoxSpeakOtherLogType = new JCheckBox("その他のログを読み上げる");
 
     private final BouyomiChan bouyomiChan;
 
@@ -32,14 +42,23 @@ public class MainWindow extends JFrame{
         this.bouyomiChan = BouyomiChan.get();
 
         textFieldLogFolder.setText(bouyomiChan.getOption().logFolderPath);
-        checkBoxSpeakPlayerName.setText("プレイヤー名を読み上げる");
+
         checkBoxSpeakPlayerName.setSelected(bouyomiChan.getOption().speakPlayerName);
+        checkBoxSpeakSayLogType.setSelected(bouyomiChan.getOption().speakSayLogType);
+        checkBoxSpeakEmoteLogType.setSelected(bouyomiChan.getOption().speakEmoteLogType);
+        checkBoxSpeakYellLogType.setSelected(bouyomiChan.getOption().speakYellLogType);
+        checkBoxSpeakShoutLogType.setSelected(bouyomiChan.getOption().speakShoutLogType);
+        checkBoxSpeakLinkShellLogType.setSelected(bouyomiChan.getOption().speakLinkShellLogType);
+        checkBoxSpeakFreeCompanyLogType.setSelected(bouyomiChan.getOption().speakFreeCompanyLogType);
+        checkBoxSpeakPartyLogType.setSelected(bouyomiChan.getOption().speakPartyLogType);
+        checkBoxSpeakTellLogType.setSelected(bouyomiChan.getOption().speakTellLogType);
+        checkBoxSpeakOtherLogType.setSelected(bouyomiChan.getOption().speakOtherLogType);
     }
 
     public void showMainWindow() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(10, 10, 400, 100);
+        setBounds(10, 10, 400, 360);
         setTitle("FF14Rep棒読みちゃん");
         setLocationRelativeTo(null);
 
@@ -86,17 +105,37 @@ public class MainWindow extends JFrame{
             }
         });
 
-        add(checkBoxSpeakPlayerName, BorderLayout.PAGE_END);
-        checkBoxSpeakPlayerName.addChangeListener(new ChangeListener() {
+        JPanel panelCheckBoxes = new JPanel();
+        add(panelCheckBoxes, BorderLayout.PAGE_END);
+        panelCheckBoxes.setLayout(new BoxLayout(panelCheckBoxes, BoxLayout.Y_AXIS));
+
+        class SaveCheckBoxChangeListener implements ChangeListener {
             @Override
             public void stateChanged(ChangeEvent e) {
-                Option option = bouyomiChan.getOption();
-                Properties conf = bouyomiChan.readProperties();
-                option.speakPlayerName = checkBoxSpeakPlayerName.isSelected();
-                option.saveProperties(conf);
-                bouyomiChan.saveToFile(conf);
+                saveCheckBoxes();
             }
-        });
+        }
+        SaveCheckBoxChangeListener saveCheckBoxChangeListener = new SaveCheckBoxChangeListener();
+        panelCheckBoxes.add(checkBoxSpeakPlayerName);
+        checkBoxSpeakPlayerName.addChangeListener(saveCheckBoxChangeListener);
+        panelCheckBoxes.add(checkBoxSpeakSayLogType);
+        checkBoxSpeakSayLogType.addChangeListener(saveCheckBoxChangeListener);
+        panelCheckBoxes.add(checkBoxSpeakEmoteLogType);
+        checkBoxSpeakEmoteLogType.addChangeListener(saveCheckBoxChangeListener);
+        panelCheckBoxes.add(checkBoxSpeakYellLogType);
+        checkBoxSpeakYellLogType.addChangeListener(saveCheckBoxChangeListener);
+        panelCheckBoxes.add(checkBoxSpeakShoutLogType);
+        checkBoxSpeakShoutLogType.addChangeListener(saveCheckBoxChangeListener);
+        panelCheckBoxes.add(checkBoxSpeakLinkShellLogType);
+        checkBoxSpeakLinkShellLogType.addChangeListener(saveCheckBoxChangeListener);
+        panelCheckBoxes.add(checkBoxSpeakFreeCompanyLogType);
+        checkBoxSpeakFreeCompanyLogType.addChangeListener(saveCheckBoxChangeListener);
+        panelCheckBoxes.add(checkBoxSpeakPartyLogType);
+        checkBoxSpeakPartyLogType.addChangeListener(saveCheckBoxChangeListener);
+        panelCheckBoxes.add(checkBoxSpeakTellLogType);
+        checkBoxSpeakTellLogType.addChangeListener(saveCheckBoxChangeListener);
+        panelCheckBoxes.add(checkBoxSpeakOtherLogType);
+        checkBoxSpeakOtherLogType.addChangeListener(saveCheckBoxChangeListener);
 
         addWindowStateListener(new WindowAdapter() {
             @Override
@@ -106,6 +145,23 @@ public class MainWindow extends JFrame{
             }
         });
         setVisible(true);
+    }
+
+    private void saveCheckBoxes() {
+        Option option = bouyomiChan.getOption();
+        Properties conf = bouyomiChan.readProperties();
+        option.speakPlayerName = checkBoxSpeakPlayerName.isSelected();
+        option.speakSayLogType = checkBoxSpeakSayLogType.isSelected();
+        option.speakEmoteLogType = checkBoxSpeakEmoteLogType.isSelected();
+        option.speakYellLogType = checkBoxSpeakYellLogType.isSelected();
+        option.speakShoutLogType = checkBoxSpeakShoutLogType.isSelected();
+        option.speakLinkShellLogType = checkBoxSpeakLinkShellLogType.isSelected();
+        option.speakFreeCompanyLogType = checkBoxSpeakFreeCompanyLogType.isSelected();
+        option.speakPartyLogType = checkBoxSpeakPartyLogType.isSelected();
+        option.speakTellLogType = checkBoxSpeakTellLogType.isSelected();
+        option.speakOtherLogType = checkBoxSpeakOtherLogType.isSelected();
+        option.saveProperties(conf);
+        bouyomiChan.saveToFile(conf);
     }
 
     private void selectFolder() {
