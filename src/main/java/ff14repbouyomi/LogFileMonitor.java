@@ -97,6 +97,14 @@ public class LogFileMonitor {
         String user = splitted[1];
         String content = splitted[2];
 
+        String matchText = bouyomiChan.getOption().matchText.trim();
+        matchText = matchText == null ? "" : matchText;
+        String regex = ".*" + matchText + ".*";
+        // もし含むテキストがある場合は、含まなかったら終了する
+        if(!matchText.isEmpty() && !content.matches(regex)) {
+            return;
+        }
+
         switch (logType) {
             case Say:
                 if(bouyomiChan.getOption().speakSayLogType) post(user, content);
@@ -131,7 +139,7 @@ public class LogFileMonitor {
 
     private void post(String user, String content) {
         JsonChat chat = new JsonChat();
-        chat.text = bouyomiChan.getOption().speakPlayerName ? content + "＠" + user : content;
+        chat.text = bouyomiChan.getOption().speakPlayerName ? content + " ＠" + user : content;
         bouyomiChan.post(JsonChat.toJson(chat));
         System.out.println(chat.text);
     }

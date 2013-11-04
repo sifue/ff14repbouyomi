@@ -30,6 +30,8 @@ public class Option implements Config {
     private final String speakTellLogTypeKey = "SpeakTellLogType";
     public volatile Boolean speakOtherLogType = true;
     private final String speakOtherLogTypeKey = "SpeakOtherLogType";
+    public volatile String matchText = "";
+    private final String matchTextKey = "matchText";
 
 
 	public void debugPrint(Object o) {
@@ -127,6 +129,9 @@ public class Option implements Config {
         } catch (NumberFormatException e) {
             speakOtherLogType = true;
         }
+
+        s = conf.getProperty(matchTextKey);
+        matchText  = s == null ? "" : s;
     }
 
 	@Override
@@ -145,6 +150,8 @@ public class Option implements Config {
         conf.setProperty(speakPartyLogTypeKey, speakPartyLogType.toString());
         conf.setProperty(speakTellLogTypeKey, speakTellLogType.toString());
         conf.setProperty(speakOtherLogTypeKey, speakOtherLogType.toString());
+
+        conf.setProperty(matchTextKey, matchText);
 
 		return conf;
 	}

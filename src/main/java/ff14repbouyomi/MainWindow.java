@@ -1,18 +1,12 @@
 package ff14repbouyomi;
 
-import sun.net.ftp.FtpReplyCode;
-
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.event.*;
 import java.io.File;
 import java.util.Properties;
-import java.util.concurrent.Executors;
 
 /**
  * メインのJFrameを起動するUIクラス
@@ -32,6 +26,8 @@ public class MainWindow extends JFrame{
     private JCheckBox checkBoxSpeakPartyLogType = new JCheckBox("partyを読み上げる");
     private JCheckBox checkBoxSpeakTellLogType = new JCheckBox("tellを読み上げる");
     private JCheckBox checkBoxSpeakOtherLogType = new JCheckBox("その他のログを読み上げる");
+
+    private JTextField textFieldMatchText = new JTextField();
 
     private final BouyomiChan bouyomiChan;
 
@@ -53,12 +49,13 @@ public class MainWindow extends JFrame{
         checkBoxSpeakPartyLogType.setSelected(bouyomiChan.getOption().speakPartyLogType);
         checkBoxSpeakTellLogType.setSelected(bouyomiChan.getOption().speakTellLogType);
         checkBoxSpeakOtherLogType.setSelected(bouyomiChan.getOption().speakOtherLogType);
+        textFieldMatchText.setText(bouyomiChan.getOption().matchText);
     }
 
     public void showMainWindow() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setBounds(10, 10, 400, 360);
+        setBounds(10, 10, 450, 400);
         setTitle("FF14Rep棒読みちゃん");
         setLocationRelativeTo(null);
 
@@ -109,33 +106,50 @@ public class MainWindow extends JFrame{
         add(panelCheckBoxes, BorderLayout.PAGE_END);
         panelCheckBoxes.setLayout(new BoxLayout(panelCheckBoxes, BoxLayout.Y_AXIS));
 
-        class SaveCheckBoxChangeListener implements ChangeListener {
+        class SaveStateChangeListener implements ChangeListener {
             @Override
             public void stateChanged(ChangeEvent e) {
-                saveCheckBoxes();
+                saveState();
             }
         }
-        SaveCheckBoxChangeListener saveCheckBoxChangeListener = new SaveCheckBoxChangeListener();
+        SaveStateChangeListener saveStateChangeListener = new SaveStateChangeListener();
         panelCheckBoxes.add(checkBoxSpeakPlayerName);
-        checkBoxSpeakPlayerName.addChangeListener(saveCheckBoxChangeListener);
+        checkBoxSpeakPlayerName.addChangeListener(saveStateChangeListener);
         panelCheckBoxes.add(checkBoxSpeakSayLogType);
-        checkBoxSpeakSayLogType.addChangeListener(saveCheckBoxChangeListener);
+        checkBoxSpeakSayLogType.addChangeListener(saveStateChangeListener);
         panelCheckBoxes.add(checkBoxSpeakEmoteLogType);
-        checkBoxSpeakEmoteLogType.addChangeListener(saveCheckBoxChangeListener);
+        checkBoxSpeakEmoteLogType.addChangeListener(saveStateChangeListener);
         panelCheckBoxes.add(checkBoxSpeakYellLogType);
-        checkBoxSpeakYellLogType.addChangeListener(saveCheckBoxChangeListener);
+        checkBoxSpeakYellLogType.addChangeListener(saveStateChangeListener);
         panelCheckBoxes.add(checkBoxSpeakShoutLogType);
-        checkBoxSpeakShoutLogType.addChangeListener(saveCheckBoxChangeListener);
+        checkBoxSpeakShoutLogType.addChangeListener(saveStateChangeListener);
         panelCheckBoxes.add(checkBoxSpeakLinkShellLogType);
-        checkBoxSpeakLinkShellLogType.addChangeListener(saveCheckBoxChangeListener);
+        checkBoxSpeakLinkShellLogType.addChangeListener(saveStateChangeListener);
         panelCheckBoxes.add(checkBoxSpeakFreeCompanyLogType);
-        checkBoxSpeakFreeCompanyLogType.addChangeListener(saveCheckBoxChangeListener);
+        checkBoxSpeakFreeCompanyLogType.addChangeListener(saveStateChangeListener);
         panelCheckBoxes.add(checkBoxSpeakPartyLogType);
-        checkBoxSpeakPartyLogType.addChangeListener(saveCheckBoxChangeListener);
+        checkBoxSpeakPartyLogType.addChangeListener(saveStateChangeListener);
         panelCheckBoxes.add(checkBoxSpeakTellLogType);
-        checkBoxSpeakTellLogType.addChangeListener(saveCheckBoxChangeListener);
+        checkBoxSpeakTellLogType.addChangeListener(saveStateChangeListener);
         panelCheckBoxes.add(checkBoxSpeakOtherLogType);
-        checkBoxSpeakOtherLogType.addChangeListener(saveCheckBoxChangeListener);
+        checkBoxSpeakOtherLogType.addChangeListener(saveStateChangeListener);
+
+        JPanel panelMatchText = new JPanel();
+        panelMatchText.setLayout(new BorderLayout());
+
+        JLabel labelMatchText = new JLabel("含むテキスト: ");
+        panelMatchText.add(labelMatchText, BorderLayout.WEST);
+
+        panelMatchText.add(textFieldMatchText, BorderLayout.CENTER);
+        textFieldMatchText.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                saveState();
+            }
+        });
+
+        panelCheckBoxes.add(panelMatchText);
+
 
         addWindowStateListener(new WindowAdapter() {
             @Override
@@ -147,7 +161,7 @@ public class MainWindow extends JFrame{
         setVisible(true);
     }
 
-    private void saveCheckBoxes() {
+    private void saveState() {
         Option option = bouyomiChan.getOption();
         Properties conf = bouyomiChan.readProperties();
         option.speakPlayerName = checkBoxSpeakPlayerName.isSelected();
@@ -160,6 +174,7 @@ public class MainWindow extends JFrame{
         option.speakPartyLogType = checkBoxSpeakPartyLogType.isSelected();
         option.speakTellLogType = checkBoxSpeakTellLogType.isSelected();
         option.speakOtherLogType = checkBoxSpeakOtherLogType.isSelected();
+        option.matchText = textFieldMatchText.getText();
         option.saveProperties(conf);
         bouyomiChan.saveToFile(conf);
     }
